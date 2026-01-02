@@ -1,12 +1,12 @@
 #! /bin/bash
 #$ -S /bin/bash
-#$ -l tmem=3.6G        #physical memory limit
-#$ -l h_vmem=3.6G      #virtual memory limit
-#$ -l h_rt=24:00:00    #Wall time
-#$ -j y                #merges STDOUT and STDERR
-#$ -N fastqc_trim      #job name
-#$ -t 1-27             # tot number of files (As we have forward and reverse reads it is the total number of samples=number.files/2)
-#$ -tc 10              # max number of jobs running at once (don't flood the cluster!)
+#$ -l tmem=3.6G  
+#$ -l h_vmem=3.6G  
+#$ -l h_rt=24:00:00  
+#$ -j y    
+#$ -N fastqc_trim   
+#$ -t 1-27  # tot number of files (As we have forward and reverse reads it is the total number of samples=number.files/2)
+#$ -tc 10  # max number of jobs running at once (don't flood the cluster!)
 
 #export modules and path for the following:
 #FastQC
