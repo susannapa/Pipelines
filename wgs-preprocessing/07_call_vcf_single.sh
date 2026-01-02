@@ -1,13 +1,13 @@
 #!/bin/bash
 #$ -S /bin/bash
-#$ -l tmem=3.6G          #physical memory limit
-#$ -l h_vmem=3.6G        #virtual memory limit
-#$ -l h_rt=120:00:00     #Wall time
-#$ -j y                  #merges STDOUT and STDERR
-#$ -N bamtovcf_single    #job name
+#$ -l tmem=3.6G   
+#$ -l h_vmem=3.6G  
+#$ -l h_rt=120:00:00  
+#$ -j y    
+#$ -N bamtovcf_single 
 #$ -pe smp 4
-#$ -t 1-4                #Number of files: so you need the total number of bams you will run over 
-#$ -tc 4                 #maximal number of jobs you can submit
+#$ -t 1-4 
+#$ -tc 4 
 
 #this script works for single samples
 
