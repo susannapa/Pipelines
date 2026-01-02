@@ -1,12 +1,12 @@
 #!/bin/bash
 #$ -S /bin/bash
-#$ -l tmem=3.6G        #physical memory limit
-#$ -l h_vmem=3.6G      #virtual memory limit
-#$ -l h_rt=200:00:00   #Wall time
-#$ -j y                #merges STDOUT and STDERR
-#$ -N make_bam1        #job name
-#$ -t 1-27             #Number of files:count files with ls *_R1_001_val_1.fq.gz 2>/dev/null | wc -l
-#$ -tc 11              #maximal number of files running together
+#$ -l tmem=3.6G  
+#$ -l h_vmem=3.6G   
+#$ -l h_rt=200:00:00  
+#$ -j y   
+#$ -N make_bam1   
+#$ -t 1-27    
+#$ -tc 11  
 #$ -pe smp 8
 #$ -R y
 
