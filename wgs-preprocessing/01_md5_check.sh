@@ -1,13 +1,13 @@
 #!/bin/bash
 #$ -S /bin/bash
-#$ -l tmem=1.6G       # physical memory limit
-#$ -l h_vmem=1.6G     # virtual memory limit
+#$ -l tmem=1.6G # physical memory limit
+#$ -l h_vmem=1.6G  # virtual memory limit
 #$ -l h_rt=966:00:00  # wall time
-#$ -j y               # merge STDOUT and STDERR
-#$ -N md5sum          # job name
+#$ -j y   # merge STDOUT and STDERR
+#$ -N md5sum # job name
 #$ -R y
-#$ -t 1-1             # tot number of files
-#$ -tc 1              # max number of jobs running at once
+#$ -t 1-1  # tot number of files
+#$ -tc 1  # max number of jobs running at once
 
 #add any modules or paths here
 export PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:${PATH}
