@@ -48,7 +48,7 @@ INDELS=/directory/to/resources_broad_hg38_v0_Mills_and_1000G_gold_standard.indel
 
 java "-Xmx2G" -jar /share/apps/genomics/picard-2.20.3/bin/picard.jar AddOrReplaceReadGroups \
         I=./$k1 O=./recal/${k1%%_sorted.bam}"_RG.bam" \
-        ID=./${k1%%_sorted.bam} PU=B LB=DNA PL=ILLUMINA SM=./${k1%%_sorted.bam} 
+        ID=${k1%%_sorted.bam} PU=B LB=DNA PL=ILLUMINA SM=${k1%%_sorted.bam} 
 
 
 #continue with script 2

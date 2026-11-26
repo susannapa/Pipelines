@@ -13,7 +13,8 @@ This folder contains scripts for pre-processing raw sequencing data (FASTQ) into
 03_make_bam.sh – Aligns reads to reference genome and generates BAM files
 04_base_recal_1.sh & 05_base_recal_2.sh – Performs base quality recalibration using GATK
 06_call_gvcf.sh – Generates gVCF files per sample using HaplotypeCaller
-07_call_vcf_single.sh – Calls VCFs from gVCFs for single samples
+07_call_vcf_single.sh – Calls VCFs directly from the recalibrated BAMs, for single samples (no gVCF step)
+main.nf + nextflow.config – Nextflow version of steps 02–06 (trimming, alignment, duplicate marking, BQSR, gVCF), one sample per task
 
 ### vcf-hard-filtering/
 
@@ -25,9 +26,20 @@ This folder contains scripts to perform hard filtering of VCF files after varian
 
 ## Usage
 
-Modify paths in scripts to point to your input data, reference genome, and output directories.
+Bash scripts: modify paths in scripts to point to your input data, reference genome, and output directories.
 Prepare sample lists as .txt files if using array jobs.
-Submit scripts to your HPC scheduler (qsub / sbatch) or run locally with adjusted resource settings.
+Submit scripts to your HPC scheduler (qsub, scripts are written for SGE array jobs) or run locally with adjusted resource settings.
+
+Nextflow:
+
+```bash
+cd wgs-preprocessing
+nextflow run main.nf --reads "/path/to/FASTQ/*_R{1,2}_001.fastq.gz" --genome /path/to/GRCh38.fa \
+    --dbsnp /path/to/dbsnp138.vcf --mills /path/to/Mills_and_1000G.indels.hg38.vcf.gz
+```
+
+To check the workflow without running the tools: `nextflow run main.nf -stub-run --reads "..."`.
+To run on the cluster, set `executor = 'sge'` in `nextflow.config`.
 
 ### Dependencies
 GATK ≥4.1
@@ -36,5 +48,6 @@ htslib ≥1.10
 Picard Tools
 BWA
 Python3
-Java 1.8+
+Java 1.8+ (Java 17+ for Nextflow)
+Nextflow ≥23 (for main.nf)
 Linux / HPC environment recommended

@@ -21,7 +21,7 @@ export PATH=/share/apps/jdk1.8.0_131/bin:${PATH}
 export LD_LIBRARY_PATH=/share/apps/jdk1.8.0_131/bin:${LD_LIBRARY_PATH}
 #Load GATK
 export PATH=/share/apps/genomics/gatk-4.1.2.0:${PATH}
-export PATH=/share/apps/genomics/gatk-4.1.2.0:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=/share/apps/genomics/gatk-4.1.2.0:${LD_LIBRARY_PATH}
 #Load python
 export PATH=/share/apps/python-3.6.9/lib:${PATH}
 export LD_LIBRARY_PATH=/share/apps/python-3.6.9/lib:${LD_LIBRARY_PATH}
@@ -53,6 +53,9 @@ readarray -t path < /path/to/your/file_path.txt
 y="${inputfile[$SGE_TASK_ID-1]}"
 p="${path[$SGE_TASK_ID-1]}"
 
+#sample name without .vcf.gz, used for all output files
+s=${y%%.vcf.gz}
+
 cd /your/input/directory/
 genome=/directory/to/genome/GRCh38.d1.vd1.fa
 
@@ -61,12 +64,12 @@ gatk --java-options "-Xmx4g" SelectVariants \
     -R $genome \
     -V $p \
     -select-type SNP \
-    -O ${y%%.vcf.gz}"_SNP.vcf.gz"
+    -O ${s}"_SNP.vcf.gz"
 
 #filter SNPs
 gatk --java-options "-Xmx4g" VariantFiltration \
 		-R $genome \
-		-V /path/${y%%.vcf.gz}"_SNP.vcf.gz" \
+		-V ${s}"_SNP.vcf.gz" \
     -filter "QD < 2.0" --filter-name "QD2" \
     -filter "QUAL < 30.0" --filter-name "QUAL30" \
     -filter "SOR > 3.0" --filter-name "SOR3" \
@@ -74,7 +77,7 @@ gatk --java-options "-Xmx4g" VariantFiltration \
     -filter "MQ < 40.0" --filter-name "MQ40" \
     -filter "MQRankSum < -12.5" --filter-name "MQRankSum-12.5" \
     -filter "ReadPosRankSum < -8.0" --filter-name "ReadPosRankSum-8" \
-    -O /path/${y%%.vcf.gz}"_SNP_hf.vcf.gz"
+    -O ${s}"_SNP_hf.vcf.gz"
 
 
 #select INDELS
@@ -82,21 +85,21 @@ gatk --java-options "-Xmx4g" SelectVariants \
     -R $genome \
     -V $p \
     -select-type INDEL \
-    -O ${y%%.vcf.gz}"_indels.vcf.gz"
+    -O ${s}"_indels.vcf.gz"
 
 #filter INDELS
 gatk --java-options "-Xmx4g" VariantFiltration \
       -R $genome \
-	    -V /path/${y%%.vcf.gz}"_indels.vcf.gz" \
+	    -V ${s}"_indels.vcf.gz" \
 	    -filter "QD < 2.0" --filter-name "QD2" \
     	-filter "QUAL < 30.0" --filter-name "QUAL30" \
     	-filter "FS > 200.0" --filter-name "FS200" \
     	-filter "ReadPosRankSum < -20.0" --filter-name "ReadPosRankSum-20"\
-	    -O /path/${y%%.vcf.gz}"_indels_hf.vcf.gz"
+	    -O ${s}"_indels_hf.vcf.gz"
 
 #merge SNPs and indels
 java -jar /share/apps/genomics/picard-2.20.3/bin/picard.jar MergeVcfs \
-        I=/path/${y}"_SNP_hf.vcf.gz" \
-        I=/path/${y}"_indels_hf.vcf.gz" \
-        O=/path/${y}"_merge_hf.vcf"
+        I=${s}"_SNP_hf.vcf.gz" \
+        I=${s}"_indels_hf.vcf.gz" \
+        O=${s}"_merge_hf.vcf"
 

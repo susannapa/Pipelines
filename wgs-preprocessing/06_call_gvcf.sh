@@ -16,7 +16,6 @@ export JAVA_HOME=/share/apps/jdk1.8.0_131
 export PATH=/share/apps/jdk1.8.0_131/bin:${PATH}
 # Load Picard tools
 export PATH=/share/apps/genomics/picard-2.20.3/bin:${PATH}
-java -jar /share/apps/genomics/picard-2.20.3/bin/picard.jar -h
 # Load SAM tools
 export PATH=/share/apps/genomics/samtools-1.9/bin:${PATH}
 # Load GATK
@@ -39,7 +38,7 @@ genome=/directory/to/genome/GRCh38.d1.vd1.fa
 gatk --java-options "-Xmx4g" HaplotypeCaller \
      -R $genome \
      -I $k1 \
-     -O /directory/vcf/${k1%%recal.bam}".g.vcf.gz" \
+     -O /directory/vcf/${k1%%_recal.bam}".g.vcf.gz" \
      -ERC GVCF
 
 

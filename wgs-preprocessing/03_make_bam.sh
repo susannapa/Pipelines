@@ -32,7 +32,7 @@ export LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH}
 
 
 #the genome file here should be indexed using bwa
-genome=/SAN/neuroscience/proj-24057_bam/resources/genome/GRCh38.d1.vd1.fa
+genome=/directory/to/genome/GRCh38.d1.vd1.fa
 
 #cd into the directory where the trimmed files are
 cd /your/input/directory/trim
@@ -52,49 +52,52 @@ gunzip $x2
 y1=${x1%%.gz}
 y2=${x2%%.gz}
 
+#sample name, used for all output files
+sample=${sample}
+
 #Align reads to the genome using bwa
 #mem is used for reads ? 70bps in length
 #Remember to make an output directory
-bwa mem -M -t 7 $genome $y1 $y2 > /your/directory/${y1%%_R1_001_val_1.fq}".sam" 
+bwa mem -M -t 7 $genome $y1 $y2 > /your/directory/${sample}".sam" 
 #Convert sam to bam
-samtools view --threads 8 -bS /your/directory/${y1%%_R1_001_val_1.fq}".sam" -o /your/directory/${y1%%_R1_001_val_1.fq}".bam" 
+samtools view --threads 8 -bS /your/directory/${sample}".sam" -o /your/directory/${sample}".bam" 
 
 
 #Create an uBAM file. This is an unmapped bam file
 java -jar /share/apps/genomics/picard-2.20.3/bin/picard.jar FastqToSam \
         F1=$y1 F2=$y2 \
         TMP_DIR=/your/directory/temp \
-        O=/your/directory/${y1%%_R1_001_val_1.fq}"_unmapped.bam" \
-        SM=$y1
+        O=/your/directory/${sample}"_unmapped.bam" \
+        SM=$sample
 
-rm /your/directory/${y1%%_R1_001_val_1.fq}".sam" 
+rm /your/directory/${sample}".sam" 
 
 java -jar /share/apps/genomics/picard-2.20.3/bin/picard.jar MergeBamAlignment \
         TMP_DIR=/your/directory/temp \
-        ALIGNED=/your/directory/${y1%%_R1_001_val_1.fq}".bam"  \
-        UNMAPPED=/your/directory/${y1%%_R1_001_val_1.fq}"_unmapped.bam" \
-        O=/your/directory/${y1%%_R1_001_val_1.fq}"_merged.bam" \
+        ALIGNED=/your/directory/${sample}".bam"  \
+        UNMAPPED=/your/directory/${sample}"_unmapped.bam" \
+        O=/your/directory/${sample}"_merged.bam" \
         R=$genome
 
 ###Remove unneccsary files          
-rm /your/directory/${y1}".bam"
-rm /your/directory/${y1}"_unmapped.bam"       
+rm /your/directory/${sample}".bam"
+rm /your/directory/${sample}"_unmapped.bam"       
 
 java -jar /share/apps/genomics/picard-2.20.3/bin/picard.jar MarkDuplicates \
         TMP_DIR=/your/directory/temp \
-        I=/your/directory/${y1%%_R1_001_val_1.fq}"_merged.bam" \
-        O=/your/directory/${y1%%_R1_001_val_1.fq}"_duplicates.bam" \
-        M=/your/directory/${y1%%_R1_001_val_1.fq}"_duplicates_metrics.txt"
+        I=/your/directory/${sample}"_merged.bam" \
+        O=/your/directory/${sample}"_duplicates.bam" \
+        M=/your/directory/${sample}"_duplicates_metrics.txt"
 
     
 java -jar /share/apps/genomics/picard-2.20.3/bin/picard.jar SortSam \
         TMP_DIR=/your/directory/temp \
-        I=/your/directory/${y1%%_R1_001_val_1.fq}"_duplicates.bam"\
-        O=/your/directory/${y1%%_R1_001_val_1.fq}"_sorted.bam" \
+        I=/your/directory/${sample}"_duplicates.bam"\
+        O=/your/directory/${sample}"_sorted.bam" \
         SORT_ORDER=coordinate  
         
-rm /your/directory/${y1%%_R1_001_val_1.fq}"_merged.bam" 
-rm /your/directory/${y1%%_R1_001_val_1.fq}"_duplicates.bam"
+rm /your/directory/${sample}"_merged.bam" 
+rm /your/directory/${sample}"_duplicates.bam"
 
 
 
